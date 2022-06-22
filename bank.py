@@ -84,55 +84,17 @@ length_of_id = 10
 number_of_option_cards = 7
 number_of_option_users = 10
 number_of_option_users_cards = 11
-
 expiry_months = 40
 
-replaces_tolatin = {
-    "a": "а",
-    "c": "к",
-    "d": "д",
-    "k": "к",
-    "": "ь",
-    "": "ъ",
-    "e": "е",
-    "f": "ф",
-    "q": "к",
-    "v": "в",
-    "w": "в",
-    "h": "х",
-    "r": "р",
-    "t": "т",
-    "y": "й",
-    "u": "у",
-    "i": "и",
-    "o": "о",
-    "p": "п",
-    "j": "джей",
-    "l": "л",
-    "z": "з",
-    "x": "кс",
-    "n": "н",
-    "c": "ц",
-    "g": "г",
-    "sh": "ш",
-    "sch": "щ",
-    "i": "ы",
-    "zh": "ж",
-    "e": "э",
-    "ya": "ы",
-    "ch": "ч",
-    "s": "с",
-    "i": "и",
-    "t": "т",
-    "b": "б",
-    "yu": "ю"
-}
+name_file_regions = "regions"
+name_file_to_latin = "latin-russian_dict"
 
-regions = json.load(open("regions.json", "r"))
+replaces_tolatin = json.load(open(f"{name_file_to_latin}.json", "r"))
+regions = json.load(open(f"{name_file_regions}.json", "r"))
 
 try:
     open(f"{databasename}.db", 'r')
-except Exception:
+except:
     print("База данных отсутствует")
     time.sleep(0.1)
     print("Создание базы данных...")
@@ -160,6 +122,7 @@ cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tablecards_users_name}(
 """)
 
 db.commit()
+
 cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tableusersname}(
    id INT PRIMARY KEY,
    login TEXT,
@@ -174,6 +137,7 @@ cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tableusersname}(
 """)
 
 db.commit()
+
 cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tablecardsname}(
    id INT PRIMARY KEY,
    name TEXT,
@@ -184,5 +148,3 @@ cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tablecardsname}(
    limited BOOL);
 """)
 db.commit()
-
-newname = get_card(2)["name"]
