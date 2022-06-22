@@ -22,65 +22,6 @@ print("-----------СОЗДАНИЕ НОВОЙ БАНКОВСКОЙ КАРТЫ П
 print("-------------------------------------------------------------------")
 print("")
 
-import math
-import PySimpleGUI as psg
-
-psg.theme('DarkAmber')
-
-layout = [
-    [psg.Text('Формат формулы: ax^2 + bx + c = 0', font="Comfortaa")],
-    [psg.Listbox(['Формат формулы: ax^2 + bx + c = 0', "142wd"], font="Comfortaa", size=(50, 2))],
-    [psg.InputText(size=4), psg.Text('* x^2 +', font="Comfortaa"),
-     psg.InputText(size=4), psg.Text('* x +', font="Comfortaa"),
-     psg.InputText(size=4), psg.Text(' = 0', font="Comfortaa")],
-    [psg.Text('Точность вычисления (цифр после точки): ', font="Comfortaa"), psg.InputText(size=5)],
-    [psg.Button('Высчитать', font="Comfortaa", key="submit"),
-     psg.Button('Выйти', font="Comfortaa", key="cancel")],
-    [psg.Text('', font="Comfortaa", key="discr")],
-    [psg.Text('', font="Comfortaa", key="x1"),
-     psg.Text('', font="Comfortaa", key="x2")],
-    [psg.Text('', font="Comfortaa", key="error", text_color="red")]]
-
-window = psg.Window("Квадратные уравнения", layout)
-
-if __name__ == "__main__":
-    while True:
-        event, values = window.read()
-        if event:
-            window["error"].update("")
-            window["discr"].update(f"")
-        if event in (psg.WIN_CLOSED, "cancel"):
-            break
-        if event == "submit":
-            rd = values[3]
-            try:
-                rd = int(rd)
-            except:
-                rd = 2
-
-            try:
-                int(values[0])
-                int(values[1])
-                int(values[2])
-            except:
-                window["error"].update("ОШИБКА В ВВЕДЕНИИ ДАННЫХ")
-
-            else:
-                D = int(values[1]) ** 2 - 4 * int(values[0]) * int(values[2])
-                if D < 0:
-                    window["x1"].update(f"Решений нет")
-                    window["x2"].update(f"")
-                elif D == 0:
-                    window["discr"].update(f"Дискриминант = {round(D, rd)}")
-                    window["x1"].update(f"x = {round((-int(values[1]) + D) / (int(values[0]) * 2), rd)}")
-                    window["x2"].update(f"")
-                else:
-                    D = math.sqrt(D)
-                    window["discr"].update(f"Дискриминант = {round(D, rd)}")
-                    window["x1"].update(f"x1 = {round((-int(values[1]) + D) / (int(values[0]) * 2), rd)}")
-                    window["x2"].update(f"x2 = {round((-int(values[1]) - D) / (int(values[0]) * 2), rd)}")
-window.close()
-
 if debug:
     new_card_type = bank.get_cardid_byname("Виртуальная")
     new_card_user_id = 4
