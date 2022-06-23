@@ -2,7 +2,6 @@ import time
 import sqlite3
 import json
 
-
 databasename = "db_bank"
 tablecards_users_name = "cards_users"
 tablecardsname = "cards"
@@ -10,8 +9,8 @@ tableusersname = "users"
 
 length_of_id = 10
 number_of_option_cards = 7
-number_of_option_users = 10
-number_of_option_users_cards = 11
+number_of_option_users = 11
+number_of_option_users_cards = 9
 expiry_months = 40
 cvc_length = 3
 
@@ -70,25 +69,37 @@ def get_card(id_card):
     return info_card
 
 
-def get_user(id_card):
-    db = sqlite3.connect(f"{databasename}.db")
-    cursor = db.cursor()
-    a = cursor.execute(f"""SELECT * FROM {tableusersname} WHERE ID={id_card}""")
+def get_user_card(cardholder_name: str) -> list:
+    db_card = sqlite3.connect(f"{databasename}.db")
+    cursor_card = db_card.cursor()
+    return list(cursor_card.execute(f"""SELECT * FROM {tablecards_users_name} WHERE cardholder_name='{cardholder_name}'"""))
+
+
+def get_user(id_card: int) -> dict:
+    db_user = sqlite3.connect(f"{databasename}.db")
+    cursor_user = db_user.cursor()
+    a = cursor_user.execute(f"""SELECT * FROM {tableusersname} WHERE ID={id_card}""")
+    info_user = {}
     for i in a:
         info_user = i
-    info_user = {
-        'id': info_user[0],
-        'login': info_user[1],
-        'password': info_user[2],
-        'name': info_user[3],
-        'city': info_user[4],
-        'phone_number': info_user[5],
-        "email_address": info_user[6],
-        "secret_phrase": info_user[7],
-        "blocked": info_user[8],
-        "reputation": info_user[9],
-    }
-    return info_user
+    try:
+        info_user = {
+            'id': info_user[0],
+            'login': info_user[1],
+            'password': info_user[2],
+            'name': info_user[3],
+            'city': info_user[4],
+            'phone_number': info_user[5],
+            "email_address": info_user[6],
+            "secret_phrase": info_user[7],
+            "blocked": info_user[8],
+            "reputation": info_user[9],
+            "account_id": info_user[10],
+        }
+        return info_user
+    except KeyError:
+        return {}
+
 
 replaces_tolatin = get_from_json(name_file_to_latin, ext="json", enc="Windows-1251")
 regions = get_from_json(name_file_regions, ext="json", enc="Windows-1251")
@@ -111,8 +122,6 @@ cursor = db.cursor()
 cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tablecards_users_name}(
    id INT PRIMARY KEY,
    type INT,
-   cardholder TEXT,
-   cardholder_name TEXT,
    card_number TEXT,
    blocked BOOL,
    pincode INT,
@@ -134,7 +143,8 @@ cursor.execute(f"""CREATE TABLE IF NOT EXISTS {tableusersname}(
    email_address TEXT,
    secret_phrase TEXT,
    blocked BOOL,
-   reputation INT);
+   reputation INT,
+   account_address TEXT);
 """)
 
 db.commit()

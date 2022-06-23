@@ -1,7 +1,7 @@
 import sqlite3
 import bank
 
-debug = False
+debug = True
 
 print("")
 print("-------------------------------------------------------------------")
@@ -10,13 +10,13 @@ print("-------------------------------------------------------------------")
 print("")
 
 if debug:
-    new_user_login = "Vasiliy Pupkin"
-    new_user_password = "opinmnn2223"
+    new_user_login = "1"
+    new_user_password = "1"
     new_user_name = "Пупкин Василий Иванович"
     new_user_city = "Тверь"
-    new_user_phone_number = "79520892728"
-    new_user_email = "demidovnik2007@gmail.com"
-    new_user_secret_phrase = "бестрп"
+    new_user_phone_number = "12515"
+    new_user_email = "12541@gmail.com"
+    new_user_secret_phrase = "awgawgas"
     new_user_blocked = False
     new_user_reputation = 100
 else:
@@ -41,9 +41,17 @@ cursor = db.cursor()
 for p in cursor.execute(f"SELECT COUNT(*), * FROM {bank.tableusersname} WHERE id"):
     num_of_users = p[0]
 num_of_users = num_of_users or 0
+
+
+new_card_user_city_id = "NULL"
+for u in range(0, len(bank.regions)):
+    if new_user_city in list(bank.regions.values())[u]["cities"]:
+        new_card_user_city_id = list(bank.regions.values())[u]["id_city"]
+
+fullnumber = bank.zeros_start(new_card_user_city_id, num_of_users+1)
 comma = f"INSERT INTO {bank.tableusersname} VALUES ({'?, '* (bank.number_of_option_users - 1)} ?);"
 cursor.execute(
-    comma, (num_of_users + 1, new_user_login, new_user_password, new_user_name, new_user_city, new_user_phone_number, new_user_email, new_user_secret_phrase, new_user_blocked, new_user_reputation))
+    comma, (num_of_users + 1, new_user_login, new_user_password, new_user_name, new_user_city, new_user_phone_number, new_user_email, new_user_secret_phrase, new_user_blocked, new_user_reputation, fullnumber))
 db.commit()
 
 print("")

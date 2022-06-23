@@ -24,9 +24,15 @@ layout = [
 window = psg.Window("Добавление карточки пользователю", layout)
 
 if __name__ == "__main__":
+    x = 0
+    x_pl = False
     while True:
-        event, values = window.read()
-        if event:
+        if x_pl:
+            x += 1
+        if x > 1200:
+            break
+        event, values = window.read(timeout=8)
+        if event and not event == "__TIMEOUT__":
             window["error"].update("")
         if event in (psg.WIN_CLOSED, "cancel"):
             break
@@ -52,7 +58,7 @@ if __name__ == "__main__":
                     window["error"].update("Ошибка, город выдачи не найден")
                     break
 
-                full_id_number = bank.zeros_start(new_card_user_city_id, account_number)
+                full_id_number = bank.get_user(account_number).get("account_id")
                 if is_blocked == "ДА - Блокировка присутствует":
                     is_blocked = True
                 else:
@@ -73,7 +79,8 @@ if __name__ == "__main__":
                     CVC))
                 db.commit()
                 window["info"].update(
-                    f"Карта {type_card} успешно оформлена на {new_card_user_name} - Номер карты {full_id_number}")
+                    f"Карта {type_card} успешно оформлена на {new_card_user_name} - Номер карты {bank.zeros_start(num_of_cards + 1)}")
+                x_pl = True
 
             except Exception:
                 window["error"].update("Ошибка, попробуйте снова")
