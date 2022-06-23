@@ -3,6 +3,22 @@ import sqlite3
 import json
 
 
+databasename = "db_bank"
+tablecards_users_name = "cards_users"
+tablecardsname = "cards"
+tableusersname = "users"
+
+length_of_id = 10
+number_of_option_cards = 7
+number_of_option_users = 10
+number_of_option_users_cards = 11
+expiry_months = 40
+cvc_length = 3
+
+name_file_regions = "regions"
+name_file_to_latin = "latin-russian_dict"
+
+
 def add_months(sourcedate, months):
     month = sourcedate.month - 1 + months
     year = sourcedate.year + month // 12
@@ -10,8 +26,8 @@ def add_months(sourcedate, months):
     return f"{year % 100}|{month}"
 
 
-def get_from_json(filename, ext="json"):
-    return json.load(open(f"{filename}.{ext}", "r", encoding="UTF-8"))
+def get_from_json(filename, ext="json", enc="UTF-8"):
+    return json.load(open(f"{filename}.{ext}", "r", encoding=enc))
 
 
 def to_latin(text: str):
@@ -28,12 +44,12 @@ def get_cardname_byid(idcard, file="type_cards", ext="json"):
     return list(get_from_json(file, ext).values())[idcard - 1]
 
 
-def zeros_start(*number: int or str) -> str:
+def zeros_start(*number: int or str, numnum=length_of_id) -> str:
     time.sleep(0.1)
     strw = ""
     for i in number[::-1]:
         strw += str(i)
-    return f"{'0' * (length_of_id - len(strw))}{strw}"
+    return f"{'0' * (numnum - len(strw))}{strw}"
 
 
 def get_card(id_card):
@@ -74,23 +90,8 @@ def get_user(id_card):
     }
     return info_user
 
-
-databasename = "db_bank"
-tablecards_users_name = "cards_users"
-tablecardsname = "cards"
-tableusersname = "users"
-
-length_of_id = 10
-number_of_option_cards = 7
-number_of_option_users = 10
-number_of_option_users_cards = 11
-expiry_months = 40
-
-name_file_regions = "regions"
-name_file_to_latin = "latin-russian_dict"
-
-replaces_tolatin = json.load(open(f"{name_file_to_latin}.json", "r"))
-regions = json.load(open(f"{name_file_regions}.json", "r"))
+replaces_tolatin = get_from_json(name_file_to_latin, ext="json", enc="Windows-1251")
+regions = get_from_json(name_file_regions, ext="json", enc="Windows-1251")
 
 try:
     open(f"{databasename}.db", 'r')
